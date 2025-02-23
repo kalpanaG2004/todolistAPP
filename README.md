@@ -35,12 +35,12 @@ A simple and efficient **To-Do List Web Application** built with **React (Next.j
 
 ---
 
-## 📦 Installation & Setup
+## 🛆 Installation & Setup
 
 ### **1️⃣ Clone the Repository**
 ```sh
-git clone https://github.com/your-username/todo-list.git
-cd todo-list
+git clone https://github.com/kalpanaG2004/todolistAPP.git
+cd todolistAPP
 ```
 
 ### **2️⃣ Install Dependencies**
@@ -52,7 +52,7 @@ npm install
 ```sh
 npm run dev
 ```
-Open **http://localhost:3000** in your browser.
+Open **http://localhost:3000** (or **http://localhost:3001** if port 3000 is in use) in your browser.
 
 ---
 
@@ -62,6 +62,3 @@ Open **http://localhost:3000** in your browser.
 - **Task Categories & Deadlines**
 
 ---
-
-### 🎯 Created with ❤️ for an improved task management experience!
-
