@@ -5,6 +5,7 @@ const TodoList = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
+  const [searchTriggered, setSearchTriggered] = useState(false);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -16,35 +17,34 @@ const TodoList = () => {
   };
 
   const searchHandler = () => {
+    setSearchTriggered(true);
+
     if (task.trim() === "") {
       setSearchResults([]);
       return;
     }
 
-    const results = tasks.filter((t) =>
+    const filteredResults = tasks.filter((t) =>
       t.text.toLowerCase().includes(task.toLowerCase())
     );
 
-    setSearchResults(results.length > 0 ? results : []);
+    setSearchResults(filteredResults);
   };
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    setTask(value);
+    setTask(e.target.value);
+    setSearchTriggered(false);
+  };
 
-    if (value.trim() === "") {
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setTask("");
       setSearchResults([]);
+      setSearchTriggered(false);
     }
   };
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        setTask("");
-        setSearchResults([]);
-      }
-    };
-
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
@@ -84,9 +84,10 @@ const TodoList = () => {
         <input
           type="text"
           className="flex-1 p-2 border border-blue-500 rounded"
-          placeholder="Enter/Search task here..."
+          placeholder="Search or add task..."
           value={task}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
         />
         <button
           type="submit"
@@ -108,7 +109,9 @@ const TodoList = () => {
           <h2 className="text-gray-500 text-center">No Task Available</h2>
         ) : (
           <ul>
-            {(searchResults.length > 0 ? searchResults : tasks).map((task, index) => (
+            {searchResults.length === 0 && searchTriggered ? (
+              <li className="text-red-500 font-semibold">No tasks found.</li>
+            ) : (searchResults.length > 0 ? searchResults : tasks).map((task, index) => (
               <li
                 key={index}
                 className={`flex items-center justify-between mb-2 p-2 border-b ${searchResults.includes(task) ? "bg-green-200" : ""
