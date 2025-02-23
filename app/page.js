@@ -1,55 +1,73 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const TodoList = () => {
   const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
-  const [searchResult, setSearchResult] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
 
-  // Add Task
   const submitHandler = (e) => {
     e.preventDefault();
     if (task.trim() !== "") {
       setTasks([...tasks, { text: task, completed: false, isEditing: false }]);
       setTask("");
-      setSearchResult(null);
+      setSearchResults([]);
     }
   };
 
-  // Search Task
   const searchHandler = () => {
-    const index = tasks.findIndex((t) => t.text.toLowerCase() === task.toLowerCase());
-    if (index !== -1) {
-      setSearchResult(index);
-    } else {
-      setSearchResult(null);
-      alert("Task not found!");
+    if (task.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    const results = tasks.filter((t) =>
+      t.text.toLowerCase().includes(task.toLowerCase())
+    );
+
+    setSearchResults(results.length > 0 ? results : []);
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setTask(value);
+
+    if (value.trim() === "") {
+      setSearchResults([]);
     }
   };
 
-  // Delete Task
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setTask("");
+        setSearchResults([]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const deleteHandler = (index) => {
     const updatedTasks = [...tasks];
     updatedTasks.splice(index, 1);
     setTasks(updatedTasks);
-    setSearchResult(null);
+    setSearchResults([]);
   };
 
-  // Toggle Task Completion
   const toggleCompletion = (index) => {
     const updatedTasks = [...tasks];
     updatedTasks[index].completed = !updatedTasks[index].completed;
     setTasks(updatedTasks);
   };
 
-  // Toggle Edit Mode
   const toggleEdit = (index) => {
     const updatedTasks = [...tasks];
     updatedTasks[index].isEditing = !updatedTasks[index].isEditing;
     setTasks(updatedTasks);
   };
 
-  // Save Edited Task
   const saveTask = (index, newText) => {
     const updatedTasks = [...tasks];
     updatedTasks[index] = { ...updatedTasks[index], text: newText, isEditing: false };
@@ -62,14 +80,13 @@ const TodoList = () => {
         My To-Do List
       </h1>
 
-      {/* Task Input Form */}
       <form onSubmit={submitHandler} className="flex gap-2 mb-4">
         <input
           type="text"
           className="flex-1 p-2 border border-blue-500 rounded"
-          placeholder="Enter/ Search task here..."
+          placeholder="Enter/Search task here..."
           value={task}
-          onChange={(e) => setTask(e.target.value)}
+          onChange={handleInputChange}
         />
         <button
           type="submit"
@@ -86,20 +103,17 @@ const TodoList = () => {
         </button>
       </form>
 
-      {/* Task List */}
       <div className="bg-white p-4 rounded shadow">
-        {tasks.length === 0 ? (
+        {(searchResults.length > 0 ? searchResults : tasks).length === 0 ? (
           <h2 className="text-gray-500 text-center">No Task Available</h2>
         ) : (
           <ul>
-            {tasks.map((task, index) => (
+            {(searchResults.length > 0 ? searchResults : tasks).map((task, index) => (
               <li
                 key={index}
-                className={`flex items-center justify-between mb-2 p-2 border-b ${
-                  searchResult === index ? "bg-green-200" : ""
-                }`}
+                className={`flex items-center justify-between mb-2 p-2 border-b ${searchResults.includes(task) ? "bg-green-200" : ""
+                  }`}
               >
-                {/* Strike-through if completed */}
                 <div className="flex items-center gap-2 flex-1">
                   <input
                     type="checkbox"
@@ -113,24 +127,27 @@ const TodoList = () => {
                       value={task.text}
                       onChange={(e) => {
                         const updatedTasks = [...tasks];
-                        updatedTasks[index].text = e.target.value; // Live update text
+                        updatedTasks[index].text = e.target.value;
                         setTasks(updatedTasks);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          saveTask(index, task.text);
+                        }
                       }}
                       autoFocus
                       className="p-1 border border-blue-400 rounded"
                     />
                   ) : (
                     <span
-                      className={`text-lg ${
-                        task.completed ? "line-through text-gray-500" : ""
-                      }`}
+                      className={`text-lg ${task.completed ? "line-through text-gray-500" : ""
+                        }`}
                     >
                       {task.text}
                     </span>
                   )}
                 </div>
 
-                {/* Buttons */}
                 <div className="flex gap-2">
                   {task.isEditing ? (
                     <button

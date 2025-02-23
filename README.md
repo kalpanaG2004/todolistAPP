@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# My To-Do List
 
-## Getting Started
+A simple and efficient **To-Do List Web Application** built with **React (Next.js) and Tailwind CSS**. It allows users to **add, edit, delete, complete, search, and manage tasks** seamlessly.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Features
+
+### ✅ **Task Management**
+- **Add a New Task** → Enter a task in the input field and click **Add Task**.
+- **Mark Task as Completed** → Click the checkbox to mark/unmark a task as complete.
+- **Edit Task** → Click the **Edit** button, modify the task inline, and either:
+  - Press **Enter** to save the changes.
+  - Click the **Save** button to confirm edits.
+- **Delete Task** → Click the **Delete** button to remove a task permanently.
+
+### 🔍 **Search & Filtering**
+- **Search Task** → Enter keywords in the input field and click **Search Task**.
+  - **Partial Search Supported** → Searching "bath" will match "bathing".
+  - **Multiple Matches Shown** → If multiple tasks match, all are displayed.
+- **Reset Search** →
+  - **Clear input field** → Resets and shows all tasks.
+  - **Press `Esc` key** → Clears search and restores the full task list.
+
+### 🎨 **UI & Styling**
+- **Minimalist Blue-Themed UI** using **Tailwind CSS**.
+- **Highlighted Search Results** → Matched tasks are visually distinguished.
+- **Dynamic Button Switching** → Edit button turns into Save button when editing.
+
+---
+
+## 🛠️ Tech Stack
+- **Frontend** → React (Next.js)
+- **Styling** → Tailwind CSS
+
+---
+
+## 📦 Installation & Setup
+
+### **1️⃣ Clone the Repository**
+```sh
+git clone https://github.com/your-username/todo-list.git
+cd todo-list
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### **2️⃣ Install Dependencies**
+```sh
+npm install
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### **3️⃣ Run the App**
+```sh
+npm run dev
+```
+Open **http://localhost:3000** in your browser.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🌟 Future Enhancements
+- **Backend Integration** (API calls for task storage)
+- **Drag & Drop Reordering**
+- **Task Categories & Deadlines**
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🎯 Created with ❤️ for an improved task management experience!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
