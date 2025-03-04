@@ -49,29 +49,42 @@ const TodoList = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const deleteHandler = (index) => {
-    const updatedTasks = [...tasks];
-    updatedTasks.splice(index, 1);
+  const deleteHandler = (taskText) => {
+    const updatedTasks = tasks.filter((t) => t.text !== taskText);
     setTasks(updatedTasks);
-    setSearchResults([]);
+    if (searchTriggered) {
+      setSearchResults(updatedTasks.filter((t) => t.text.toLowerCase().includes(task.toLowerCase())));
+    }
   };
 
-  const toggleCompletion = (index) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index].completed = !updatedTasks[index].completed;
+  const toggleCompletion = (taskText) => {
+    const updatedTasks = tasks.map((t) =>
+      t.text === taskText ? { ...t, completed: !t.completed } : t
+    );
     setTasks(updatedTasks);
+    if (searchTriggered) {
+      setSearchResults(updatedTasks.filter((t) => t.text.toLowerCase().includes(task.toLowerCase())));
+    }
   };
 
-  const toggleEdit = (index) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index].isEditing = !updatedTasks[index].isEditing;
+  const toggleEdit = (taskText) => {
+    const updatedTasks = tasks.map((t) =>
+      t.text === taskText ? { ...t, isEditing: !t.isEditing } : t
+    );
     setTasks(updatedTasks);
+    if (searchTriggered) {
+      setSearchResults(updatedTasks.filter((t) => t.text.toLowerCase().includes(task.toLowerCase())));
+    }
   };
 
-  const saveTask = (index, newText) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index] = { ...updatedTasks[index], text: newText, isEditing: false };
+  const saveTask = (oldText, newText) => {
+    const updatedTasks = tasks.map((t) =>
+      t.text === oldText ? { ...t, text: newText, isEditing: false } : t
+    );
     setTasks(updatedTasks);
+    if (searchTriggered) {
+      setSearchResults(updatedTasks.filter((t) => t.text.toLowerCase().includes(task.toLowerCase())));
+    }
   };
 
   return (
@@ -86,7 +99,10 @@ const TodoList = () => {
           className="flex-1 p-2 border border-blue-500 rounded"
           placeholder="Search or add task..."
           value={task}
-          onChange={handleInputChange}
+          onChange={(e) => {
+            setTask(e.target.value);
+            setSearchTriggered(false);
+          }}
           onKeyDown={handleKeyDown}
         />
         <button
@@ -111,9 +127,9 @@ const TodoList = () => {
           <ul>
             {searchResults.length === 0 && searchTriggered ? (
               <li className="text-red-500 font-semibold">No tasks found.</li>
-            ) : (searchResults.length > 0 ? searchResults : tasks).map((task, index) => (
+            ) : (searchResults.length > 0 ? searchResults : tasks).map((task) => (
               <li
-                key={index}
+                key={task.text}
                 className={`flex items-center justify-between mb-2 p-2 border-b ${searchResults.includes(task) ? "bg-green-200" : ""
                   }`}
               >
@@ -121,7 +137,7 @@ const TodoList = () => {
                   <input
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => toggleCompletion(index)}
+                    onChange={() => toggleCompletion(task.text)}
                     className="w-4 h-4 accent-blue-600"
                   />
                   {task.isEditing ? (
@@ -129,13 +145,21 @@ const TodoList = () => {
                       type="text"
                       value={task.text}
                       onChange={(e) => {
-                        const updatedTasks = [...tasks];
-                        updatedTasks[index].text = e.target.value;
+                        const updatedTasks = tasks.map((t) =>
+                          t.text === task.text ? { ...t, text: e.target.value } : t
+                        );
                         setTasks(updatedTasks);
+
+                        if (searchTriggered) {
+                          const updatedSearchResults = searchResults.map((t) =>
+                            t.text === task.text ? { ...t, text: e.target.value } : t
+                          );
+                          setSearchResults(updatedSearchResults);
+                        }
                       }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
-                          saveTask(index, task.text);
+                          saveTask(task.text, task.text);
                         }
                       }}
                       autoFocus
@@ -154,21 +178,21 @@ const TodoList = () => {
                 <div className="flex gap-2">
                   {task.isEditing ? (
                     <button
-                      onClick={() => saveTask(index, task.text)}
+                      onClick={() => saveTask(task.text, task.text)}
                       className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
                     >
                       Save
                     </button>
                   ) : (
                     <button
-                      onClick={() => toggleEdit(index)}
+                      onClick={() => toggleEdit(task.text)}
                       className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
                     >
                       Edit
                     </button>
                   )}
                   <button
-                    onClick={() => deleteHandler(index)}
+                    onClick={() => deleteHandler(task.text)}
                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                   >
                     Delete
